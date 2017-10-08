@@ -1,0 +1,116 @@
+PARSER_BEGIN(test)
+class test
+{
+	public static void main (String[] args) throws Exception
+	{
+		try
+		{
+			test analizador = new test (System.in);
+			analizador.Iniciar();
+			System.out.println("La cadena fue aceptada correctamente");
+			
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			
+		}
+		
+	}
+}
+PARSER_END(test)
+
+SKIP :
+{
+	" " | "\t" | "\n" | "\r"
+}
+TOKEN :
+{
+<#L: ["a"-"z","A"-"Z"]>
+|<#May: ["A"-"Z"]>
+|<#Min: ["a"-"z"]>
+|<#D: ["0"-"9"]>
+|<#gb: ["_"]>
+|<#S: ["_","-"]>
+						
+}
+TOKEN :
+{
+	
+	
+/*
+(MAY|Gb)  
+DD(L|S)+(L|S)+// no puede terminar en signo
+D(L|S)+(L|S)+D
+D(L|S)+D(L|S)+ // no puede terminar en signo
+(L|S)+D(L|S)+D
+(L|S)+(L|S)+DD
+D(L|S)+DD// 
+DD(L|S)+D// 
+(L|S)+DD(L|S)+ // no puede terminar en signo
+(L|S)+(L|S)+(L|S)+(L|S)+// no puede terminar en signo
+DDDD// no esta permitido
+
+D(L|S)+(L|S)+(L|S) // no puede terminar en signo
+(L|S)+D(L|S)+(L|S)  // no puede terminar en signo
+(L|S)+(L|S)+D(L|S)   // no puede terminar en signo
+(L|S)+(L|S)+(L|S)D
+
+(L|S)DDD // No esta permitido
+DDD(L|S) // No esta permitido
+--------------------------------------------------------------
+(MAY|Gb)
+1) DD(L|S)+(L)+
+2) D(L|S)+(L|S)+D
+3) D(L|S)+D(L)+
+4) (L|S)+D(L|S)+D
+5) (L|S)+(L|S)+DD
+6) D(L|S)+DD//
+7) DD(L|S)+D //
+8) (L|S)+DD(L)+
+9) (L|S)+(L|S)+(L|S)+(L)+
+10)D(L|S)+(L|S)+(L)
+11)(L|S)+D(L|S)+(L) 
+12)(L|S)+(L|S)+D(L)  
+13)(L|S)+(L|S)+(L|S)D
+14) DDDD // No esta permitido
+15)(L|S)DDD // No esta permitido
+16)DDD(L|S) // No esta permitido
+
+
+
+( D?D? (L|S)+) ) ( (D?D?) (L|S)+ ) ( (D?D?)  (L|S)+)
+(  (D?D?) (L)+ (D?D?) |(D?D?)  (L|S)+ (D?D) ) 
+
+COMBINACIONES POSIBLES
+(( D?D? (L|S)+)(D?D?))=(((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))
+VALIDACION DE NO TERMINAR EN GUION
+(((L)+)(D?D?))=((((<L>))+((<D>)?(<D>)?)))
+*/
+		<Expresion:(((<May>)|(<gb>))
+		
+		(
+		
+		//casos                                                                   //Terminacion
+		/*1*/ (((<D>)(<D>)((<L>)|(<S>))+(<L>)+)                    ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*2*/ |(((<D>)((<L>)|(<S>))+((<L>)|(<S>))+((<D>)))         ((((<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?)) ((((<L>))+((<D>)?(<D>)?))))*            )
+		/*3*/ |((<D>)((<L>)|(<S>))+((<D>))((<L>)+)                 ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*4*/ |(((<L>)|(<S>))+((<D>))((<L>)|(<S>))+((<D>))         ((((<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*             )
+		/*5*/ |(((<L>)|(<S>))+(((<L>)|(<S>))+(<D>)(<D>))           ((((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*                     )
+		/*6*/ |((<D>)((<L>)|(<S>))+(<D>)(<D>)                      ((((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*                     )
+		/*7*/ |((<D>)(<D>)((<L>)|(<S>))+((<D>))                    ((((<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*             )
+		/*8*/ |(((<L>)|(<S>))+((<D>)(<D>))+(<L>)+                  ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*9*/ |(((<L>)|(<S>))+((<L>)|(<S>))+((<L>)|(<S>))+(<L>)+   ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*10*/|((<D>)((<L>)|(<S>))+((<L>)|(<S>))+((<L>))+         ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*11*/|(((<L>)|(<S>))+(<D>)((<L>)|(<S>))+(<L>)+           ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*12*/|(((<L>)|(<S>))+((<L>)|(<S>))+(<D>)(<L>)+           ((((<D>)?(<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*       )
+		/*13*/|(((<L>)|(<S>))+((<L>)|(<S>))+(<L>)+(<D>)           ((((<D>)?)((<L>)|(<S>))+((<D>)?(<D>)?))((((<L>))+((<D>)?(<D>)?))))*             )
+		))>
+		
+	
+	
+}
+void Iniciar() :
+{}
+{
+	<Expresion> <EOF>
+	//EOF comando que avisa que termino la expresion
+}
